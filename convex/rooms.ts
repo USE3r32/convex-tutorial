@@ -16,7 +16,17 @@ export const createRoom = mutation({
         .filter((q) => 
           q.and(
             q.eq(q.field("type"), "direct"),
-            q.eq(q.field("participants"), args.participants)
+            q.eq(q.field("participants").length(), 2),
+            q.or(
+              q.and(
+                q.eq(q.field("participants")[0], args.participants[0]),
+                q.eq(q.field("participants")[1], args.participants[1])
+              ),
+              q.and(
+                q.eq(q.field("participants")[0], args.participants[1]),
+                q.eq(q.field("participants")[1], args.participants[0])
+              )
+            )
           )
         )
         .first();
