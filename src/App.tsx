@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { faker } from "@faker-js/faker";
+import { useClearDatabase } from "./utils/clearDatabase";
 import { Sidebar } from "./components/Sidebar";
 import { ChatWindow } from "./components/ChatWindow";
 import { CreateRoomModal } from "./components/CreateRoomModal";
@@ -15,6 +16,7 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const clearDatabase = useClearDatabase();
 
   const users = useQuery(api.users.getAllUsers);
   const createUser = useMutation(api.users.createUser);
@@ -98,9 +100,15 @@ export default function App() {
   if (!currentUser) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
           <p className="text-gray-600">Loading...</p>
+          <button
+            onClick={clearDatabase}
+            className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm"
+          >
+            Clear Database (Fix Schema Issues)
+          </button>
         </div>
       </div>
     );
@@ -142,6 +150,15 @@ export default function App() {
         onClose={() => setShowCreateModal(false)}
         currentUser={currentUser}
       />
+      
+      {/* Debug: Clear Database Button */}
+      <button
+        onClick={clearDatabase}
+        className="fixed bottom-4 right-4 px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-xs opacity-50 hover:opacity-100"
+        title="Clear Database"
+      >
+        🗑️ Clear DB
+      </button>
     </div>
   );
 }
